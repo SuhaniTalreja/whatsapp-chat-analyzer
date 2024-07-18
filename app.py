@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import preprocessor,helper
 import seaborn as sns
 st.sidebar.title("WhatsApp Chat Analyzer")
-
+platform = st.sidebar.radio("Select Platform", ("Android", "iPhone"))
 uploaded_file = st.sidebar.file_uploader("Choose a file")
 if uploaded_file is not None:
     # To read file as bytes:
@@ -13,11 +13,15 @@ if uploaded_file is not None:
     data= bytes_data.decode("utf-8")
 
     # preprocessing our chats
-    df = preprocessor.preprocess(data)
+    if platform == "Android":
+        df = preprocessor.preprocess_android(data)
+    else:
+        df = preprocessor.preprocess_iphone(data)
 
     # fetch unique users
     user_list = df['user'].unique().tolist()
-    user_list.remove('group_notification')
+    if 'group_notification' in user_list:
+        user_list.remove('group_notification')
     user_list.sort()
     user_list.insert(0,"Overall")
     selected_user = st.sidebar.selectbox("Show Analysis with respect to",user_list)
@@ -25,7 +29,7 @@ if uploaded_file is not None:
     if st.sidebar.button("Show Analysis") :
 
         # STATS AREA
-        num_msgs,words,num_media_msgs,num_links = helper.fetch_stats(selected_user,df)
+        num_msgs,words,num_media_msgs,num_links = helper.fetch_stats(selected_user,df,platform)
         st.title("TOP STATISTICS")
         col1,col2,col3,col4 = st.columns(4)
         
