@@ -1055,4 +1055,12 @@ you've
 yup
 message
 deleted
-
+image
+omitted
+video
+voice
+voice call 
+tap
+back
+video call
+missed
