@@ -8,7 +8,7 @@ import emoji
 import seaborn as sns
 
 # users stats
-def fetch_stats(selected_user,df):
+def fetch_stats(selected_user,df,chat_format):
 
     if selected_user != 'Overall':
         df = df[df['user'] == selected_user]
@@ -20,7 +20,11 @@ def fetch_stats(selected_user,df):
     for message in df['message']:
         words.extend(message.split())
     # 3. number of media msgs
-    num_media_msgs = df[df['message'] == "<Media omitted>\n"].shape[0]
+    if chat_format == 'Android':
+        media_msg_pattern = r"<Media omitted>\n"
+    else:  # iPhone
+        media_msg_pattern = r"image omitted"
+    num_media_msgs = df[df['message'].str.contains(media_msg_pattern)].shape[0]
     # 4. number of links
     links=[]
     for message in df['message']:
